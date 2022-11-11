@@ -1,11 +1,13 @@
+import { fetchJSON } from './functions/api.js';
+
 class InfinitePagination {
 	/**@type {string} */
 	#endpoint;
 
-	/**@type {string} */
+	/**@type {HTMLTemplateElement} */
 	#template;
 
-	/**@type {string} */
+	/**@type {HTMLElement} */
 	#target;
 
 	/**@type {string} */
@@ -14,16 +16,18 @@ class InfinitePagination {
 	/**@type {IntersectionObserver} */
 	#observer;
 
+	/**@type {boolean} */
+	#loading = false;
+
 	/**
 	 *
 	 * @param {HTMLElement} element
 	 */
 	constructor(element) {
 		this.#endpoint = element.dataset.endpoint;
-		this.#template = element.dataset.template;
-		this.#target = element.dataset.target;
+		this.#template = document.querySelector(element.dataset.template);
+		this.#target = document.querySelector(element.dataset.target);
 		this.#elements = element.dataset.elements;
-		console.log(this.#elements);
 		this.#observer = new IntersectionObserver((entries) => {
 			for (const entry of entries) {
 				if (entry.isIntersecting) {
@@ -31,8 +35,20 @@ class InfinitePagination {
 				}
 			}
 		});
+		this.#observer.observe(element);
 	}
-	#loadMore() {}
+	async #loadMore() {
+		if (this.#loading) {
+			return;
+		}
+		this.#loading = true;
+		const comments = await fetchJSON(this.#endpoint);
+		for (const comment of comments) {
+			const commentElement = this.#template.content.cloneNode(true);
+			this.#target.appendChild(commentElement);
+		}
+		this.#loading = false;
+	}
 }
 
 document

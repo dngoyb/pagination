@@ -5,11 +5,11 @@
  */
 
 export async function fetchJSON(url, options = {}) {
-	const headers = { Accept: 'application/json', ...options };
+	const headers = { Accept: 'application/json', ...options.headers };
 	const res = await fetch(url, { ...options, headers });
 
-	if (!res.ok) {
-		throw new Error('Servor error', { cause: res });
+	if (res.ok) {
+		return res.json();
 	}
-	return await res.json();
+	throw new Error('Server error', { cause: res });
 }
