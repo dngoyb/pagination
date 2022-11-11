@@ -1,8 +1,17 @@
 class InfinitePagination {
+	/**@type {string} */
 	#endpoint;
+
+	/**@type {string} */
 	#template;
+
+	/**@type {string} */
 	#target;
+
+	/**@type {string} */
 	#elements;
+
+	/**@type {IntersectionObserver} */
 	#observer;
 
 	/**
@@ -18,11 +27,12 @@ class InfinitePagination {
 		this.#observer = new IntersectionObserver((entries) => {
 			for (const entry of entries) {
 				if (entry.isIntersecting) {
-					this.#loadMore;
+					this.#loadMore();
 				}
 			}
 		});
 	}
+	#loadMore() {}
 }
 
 document
